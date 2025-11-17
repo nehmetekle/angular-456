@@ -5,6 +5,7 @@ import {
   HttpInterceptor,
   HttpRequest,
   HTTP_INTERCEPTORS,
+  HttpInterceptorFn,
 } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { selectAccess } from '../store/auth.selectors';
@@ -35,4 +36,21 @@ export const provideAuthInterceptor = {
   provide: HTTP_INTERCEPTORS,
   useClass: AuthInterceptor,
   multi: true,
+};
+
+// Functional interceptor (HttpInterceptorFn) that can be used with provideHttpClient(withInterceptors([...]))
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const store = inject(Store);
+  return store.select(selectAccess).pipe(
+    take(1),
+    switchMap((access) => {
+      if (access) {
+        const cloned = req.clone({
+          setHeaders: { Authorization: `Bearer ${access}` },
+        });
+        return next(cloned);
+      }
+      return next(req);
+    }),
+  );
 };
