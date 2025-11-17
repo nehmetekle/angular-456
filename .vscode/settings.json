@@ -6,7 +6,7 @@
     "source.organizeImports.eslint": "explicit"
   },
   "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-  "[html]": { "editor.defaultFormatter": "dbaeumer.vscode-eslint" },
+  "[html]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[typescriptreact]": { "editor.defaultFormatter": "dbaeumer.vscode-eslint" },
   "eslint.useFlatConfig": true,
   "eslint.validate": ["typescript", "html"]

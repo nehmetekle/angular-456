@@ -1,6 +1,13 @@
-<nav>
-  <a routerLink="/login" mat-button>Login</a>
-  <a routerLink="/shop/products" mat-button>Products</a>
-  <a routerLink="/shop/rating" mat-button>Rating</a>
-</nav>
-<router-outlet></router-outlet>
+<header class="site-header">
+  <div class="container header-row">
+    <a class="brand" routerLink="/">MyShop</a>
+    <nav>
+      <a routerLink="/app/login" mat-button>Login</a>
+      <a routerLink="/app/shop/products" mat-button>Products</a>
+      <a routerLink="/app/shop/rating" mat-button>Rating</a>
+    </nav>
+  </div>
+</header>
+<main class="container main-content">
+  <router-outlet></router-outlet>
+</main>
