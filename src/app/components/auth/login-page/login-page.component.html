@@ -1,1 +1,72 @@
-<p>login-page works!</p>
+<mat-card class="login-panel">
+  <mat-card-title>Sign in to MyShop</mat-card-title>
+  <mat-card-content>
+    <form (ngSubmit)="submit()" [formGroup]="form" novalidate>
+      <mat-form-field appearance="fill" class="full-width" [hideRequiredMarker]="true">
+        <mat-label>Username</mat-label>
+        <input
+          matInput
+          id="username"
+          type="text"
+          formControlName="username"
+          (focus)="onFocus('username')"
+        />
+        <mat-error
+          *ngIf="
+            form.controls['username']?.hasError('required') &&
+            (form.controls['username']?.touched || form.controls['username']?.dirty)
+          "
+          >Username is required.</mat-error
+        >
+        <mat-error
+          *ngIf="
+            form.controls['username']?.hasError('email') &&
+            (form.controls['username']?.touched || form.controls['username']?.dirty)
+          "
+          >Enter a valid email.</mat-error
+        >
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width" [hideRequiredMarker]="true">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          id="password"
+          type="password"
+          formControlName="password"
+          (focus)="onFocus('password')"
+        />
+        <mat-error
+          *ngIf="
+            form.controls['password']?.hasError('required') &&
+            (form.controls['password']?.touched || form.controls['password']?.dirty)
+          "
+          >Password is required.</mat-error
+        >
+        <mat-error
+          *ngIf="
+            form.controls['password']?.hasError('minlength') &&
+            (form.controls['password']?.touched || form.controls['password']?.dirty)
+          "
+          >Password must be at least 6 characters.</mat-error
+        >
+      </mat-form-field>
+
+      <div *ngIf="error$ | async as serverErr" class="auth-errors server-only" role="alert">
+        <div class="server-error">{{ getErrorMessage(serverErr) }}</div>
+      </div>
+
+      <div class="btn-row">
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="form.invalid || (loading$ | async)"
+        >
+          Sign in
+        </button>
+        <div *ngIf="loading$ | async" class="loading-indicator">Signing in…</div>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
