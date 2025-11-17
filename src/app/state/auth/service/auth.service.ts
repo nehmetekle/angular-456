@@ -9,8 +9,8 @@ import { loginModel } from '../models/login.model';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly tokenUrl = environment.apiBaseUrl + '/auth/token/';
-  private readonly refreshUrl = environment.apiBaseUrl + '/auth/token/refresh/';
+  private readonly tokenUrl = environment.apiBaseUrl + 'auth/token/';
+  private readonly refreshUrl = environment.apiBaseUrl + 'auth/token/refresh/';
 
   constructor(private http: HttpClient) {}
 

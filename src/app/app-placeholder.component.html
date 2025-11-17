@@ -1,8 +1,14 @@
 <header class="site-header">
   <div class="container header-row">
-    <a class="brand" routerLink="/">MyShop</a>
+    <mat-progress-bar *ngIf="isLoading$ | async" mode="indeterminate" color="primary" style="height:3px"></mat-progress-bar>
+    <a class="brand" routerLink="/app">Home</a>
     <nav>
-      <a routerLink="/app/login" mat-button>Login</a>
+      <ng-container *ngIf="isAuthenticated$ | async; else showLogin">
+        <button mat-button (click)="logout()">Logout</button>
+      </ng-container>
+      <ng-template #showLogin>
+        <a routerLink="/app/login" mat-button>Login</a>
+      </ng-template>
       <a routerLink="/app/shop/products" mat-button>Products</a>
       <a routerLink="/app/shop/rating" mat-button>Rating</a>
     </nav>

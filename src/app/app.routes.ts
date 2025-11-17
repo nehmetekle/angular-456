@@ -9,6 +9,7 @@ import { AppLandingComponent } from './app-landing.component';
 import { LoginPageComponent } from './components/auth/login-page/login-page.component';
 import { ProductsPageComponent } from './components/products/products-page/products-page.component';
 import { ProductRatingPageComponent } from './components/products/product-rating-page/product-rating-page.component';
+import { AuthGuard } from './state/auth/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -24,8 +25,8 @@ export const routes: Routes = [
     children: [
       { path: '', component: AppLandingComponent },
       { path: 'login', component: LoginPageComponent },
-      { path: 'shop/products', component: ProductsPageComponent },
-      { path: 'shop/rating', component: ProductRatingPageComponent },
+      { path: 'shop/products', component: ProductsPageComponent, canActivate: [AuthGuard] },
+      { path: 'shop/rating', component: ProductRatingPageComponent, canActivate: [AuthGuard] },
       // { path: '', redirectTo: 'shop/products', pathMatch: 'full' }
     ],
   },

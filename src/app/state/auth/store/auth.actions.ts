@@ -10,4 +10,5 @@ export abstract class AuthAction {
   static loginFailure = createAction('[Auth] Login Failure', props<{ error: any }>());
   static refreshToken = createAction('[Auth] Refresh Token', props<{ refresh: string }>());
   static refreshSuccess = createAction('[Auth] Refresh Success', props<{ access: string }>());
+  static logout = createAction('[Auth] Logout');
 }
