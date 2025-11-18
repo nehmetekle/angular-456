@@ -1,1 +1,43 @@
-<p>products-page works!</p>
+<div class="products-page">
+  <div *ngIf="loading$ | async" class="loading">Loading products…</div>
+
+  <div *ngIf="error$ | async as err" class="error">Error: {{ err | json }}</div>
+  <div class="controls">
+    <label
+      >Per page:
+      <select (change)="changePageSize($any($event.target).value)" [value]="pageSize">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+      </select>
+    </label>
+  </div>
+
+  <ul class="products-list">
+    <li *ngFor="let p of products$ | async" class="product-item">
+      <div class="product-main">
+        <div class="product-name">{{ p.name }}</div>
+        <div class="product-price">{{ p.price | currency }}</div>
+      </div>
+      <div class="product-actions">
+        <button (click)="showRating(p.id)">Show rating</button>
+        <span *ngIf="(selectedId$ | async) === p.id" class="rating">
+          Rating: {{ selectedRating$ | async }}
+        </span>
+      </div>
+    </li>
+  </ul>
+
+  <ng-container *ngIf="count$ | async as total">
+    <ng-container *ngIf="totalPages$ | async as totalPages">
+      <div class="pagination">
+        <button (click)="prevPage()" [disabled]="page === 1">‹ Prev</button>
+        <span class="page-info"
+          >Page <strong>{{ page }}</strong> / <strong>{{ totalPages }}</strong></span
+        >
+        <button (click)="nextPage(totalPages)" [disabled]="page >= totalPages">Next ›</button>
+        <span class="total-count">({{ total }} items)</span>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>

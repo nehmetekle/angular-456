@@ -14,6 +14,8 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { AuthEffects } from './state/auth/store/auth.effects';
 import { authInterceptor } from './state/auth/interceptors/auth.interceptor';
+import { ProductsEffects } from './state/products/store/products.effects';
+import { productsReducer } from './state/products/store/products.reducers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,8 +23,8 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
-    provideStore({ auth: authReducer }),
-    provideEffects([AuthEffects]),
+    provideStore({ auth: authReducer, products: productsReducer }),
+    provideEffects([AuthEffects, ProductsEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: environment.production }),
   ],
 };
