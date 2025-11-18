@@ -1,1 +1,26 @@
-<p>product-rating-page works!</p>
+<div class="rating-page">
+  <h2>Fetch Product Rating</h2>
+
+  <form (ngSubmit)="fetchRating()" class="rating-form">
+    <label for="productId">Product ID</label>
+    <input id="productId" name="productId" type="number" [(ngModel)]="idModel" min="1" required />
+    <button type="submit">Get Rating</button>
+  </form>
+
+  <div class="status">
+    <div *ngIf="loading$ | async" class="loading">Fetching rating…</div>
+    <div *ngIf="error$ | async as err" class="error">Error: {{ err | json }}</div>
+    <div *ngIf="rating$ | async as rating" class="result">Server rating: {{ rating }}</div>
+    <div *ngIf="localAvg != null" class="local">Local avg (mock data): {{ localAvg | number: '1.1-2' }}</div>
+  </div>
+
+  <div *ngIf="selectedProduct" class="product-card">
+    <h3>{{ selectedProduct.name }}</h3>
+    <div class="meta">
+      <span class="price">{{ selectedProduct.price | currency }}</span>
+      <span class="created">Created: {{ selectedProduct.created_at | date:'medium' }}</span>
+      <span class="owner">Owner: {{ selectedProduct.owner_id }}</span>
+    </div>
+    <p class="desc">ID: {{ selectedProduct.id }}</p>
+  </div>
+</div>

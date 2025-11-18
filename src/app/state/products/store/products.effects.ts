@@ -43,4 +43,22 @@ export class ProductsEffects {
       ),
     ),
   );
+
+  // Explicit loadRating action (form or direct request)
+  loadRating$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProductsAction.loadRating),
+      mergeMap(({ id }) =>
+        this.productService.getRating(id).pipe(
+          map((res: any) =>
+            ProductsAction.loadRatingSuccess({
+              id,
+              rating: res.avg_rating ?? res.rating ?? (typeof res === 'number' ? res : res),
+            }),
+          ),
+          catchError((error) => of(ProductsAction.loadRatingFailure({ error }))),
+        ),
+      ),
+    ),
+  );
 }
