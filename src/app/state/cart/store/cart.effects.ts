@@ -15,8 +15,8 @@ export class CartEffects {
   validateCart$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CartAction.validateCart),
-      mergeMap(({ items }) =>
-        this.cartService.validateCart({ items }).pipe(
+      mergeMap(({ items, coupon, shippingMethod }: any) =>
+        this.cartService.validateCart({ items, coupon, shippingMethod }).pipe(
           map((res: any) => CartAction.validateCartSuccess({ summary: res })),
           catchError((error) => of(CartAction.validateCartFailure({ error }))),
         ),
@@ -45,6 +45,10 @@ export class CartEffects {
           CartAction.removeItem,
           CartAction.updateQuantity,
           CartAction.clearCart,
+          CartAction.applyCoupon,
+          CartAction.removeCoupon,
+          CartAction.setShippingMethod,
+          CartAction.validateCartSuccess,
         ),
         debounceTime(200),
         mergeMap(() =>

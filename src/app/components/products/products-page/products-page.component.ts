@@ -51,7 +51,7 @@ export class ProductsPageComponent implements OnInit {
   addToCart(product: Product) {
     this.store.dispatch(CartAction.addItem({ product, quantity: 1 }));
   }
-  
+
   // transient UI feedback when item added
   addedMessage = '';
   addToCartWithFeedback(product: Product) {

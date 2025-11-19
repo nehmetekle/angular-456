@@ -16,7 +16,10 @@ export abstract class CartAction {
 
   static clearCart = createAction('[Cart] Clear Cart');
 
-  static validateCart = createAction('[Cart] Validate Cart', props<{ items: any[] }>());
+  static validateCart = createAction(
+    '[Cart] Validate Cart',
+    props<{ items: any[]; coupon?: string; shippingMethod?: string }>(),
+  );
   static validateCartSuccess = createAction(
     '[Cart] Validate Cart Success',
     props<{ summary: any }>(),
@@ -32,4 +35,11 @@ export abstract class CartAction {
 
   // Hydrate cart from persisted storage (cross-tab or app init)
   static hydrateCart = createAction('[Cart] Hydrate Cart', props<{ cartState: any }>());
+
+  // Coupon management
+  static applyCoupon = createAction('[Cart] Apply Coupon', props<{ code: string }>());
+  static removeCoupon = createAction('[Cart] Remove Coupon');
+
+  // Shipping / delivery options
+  static setShippingMethod = createAction('[Cart] Set Shipping Method', props<{ method: string }>());
 }
