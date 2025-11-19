@@ -11,6 +11,7 @@ import { ToastHostComponent } from './components/toast/toast.component';
 import { ToastService } from './services/toast.service';
 import { selectAuthLoading } from './state/auth/store/auth.selectors';
 import { selectCartCount } from './state/cart/store/cart.selectors';
+import { selectWishlistCount } from './state/wishlist/store/wishlist.selectors';
 import { CartSyncService } from './state/cart/service/cart-sync.service';
 
 @Component({
@@ -30,6 +31,7 @@ export class AppPlaceholderComponent {
   isAuthenticated$: Observable<boolean> = this.store.select(selectIsAuthenticated);
   isLoading$: Observable<boolean> = this.store.select(selectAuthLoading);
   cartCount$: Observable<number> = this.store.select(selectCartCount);
+  wishlistCount$: Observable<number> = this.store.select(selectWishlistCount as any);
 
   logout() {
     this.store.dispatch(AuthAction.logout());

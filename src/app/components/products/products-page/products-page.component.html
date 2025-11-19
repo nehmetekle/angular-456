@@ -37,6 +37,7 @@
           </div>
           <div class="product-actions">
             <button class="ghost" (click)="showRating(p.id)">Show rating</button>
+            <app-wishlist-button [product]="p"></app-wishlist-button>
             <button
               class="add-to-cart"
               (click)="addToCartWithFeedback(p)"

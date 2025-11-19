@@ -39,19 +39,32 @@
   border: none;
 }
 
-/* animate table rows */
+/* animate table rows (applied only when .animating is present) */
 @keyframes rowIn {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(6px) scale(0.995);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
-.cart-table tbody tr {
-  animation: rowIn 240ms ease both;
+@keyframes rowOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+.cart-table tbody tr.animating {
+  animation: rowIn 320ms cubic-bezier(0.2, 0.9, 0.24, 1) both;
+}
+.cart-table tbody tr.animating.leave {
+  animation: rowOut 260ms ease both;
 }
 
 /* small button utilities */

@@ -12,7 +12,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let it of items">
+        <tr *ngFor="let it of items" [class.animating]="animatingIds.has(it.product.id)">
           <td>
             {{ it.product.name }}
             <div class="mini-stock" *ngIf="it.product?.stock as s">

@@ -17,6 +17,7 @@ import { authInterceptor } from './state/auth/interceptors/auth.interceptor';
 import { ProductsEffects } from './state/products/store/products.effects';
 import { productsReducer } from './state/products/store/products.reducers';
 import { cartReducer } from './state/cart/store/cart.reducers';
+import { wishlistReducer } from './state/wishlist/store/wishlist.reducers';
 import { CartEffects } from './state/cart/store/cart.effects';
 
 export const appConfig: ApplicationConfig = {
@@ -25,7 +26,12 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
-    provideStore({ auth: authReducer, products: productsReducer, cart: cartReducer }),
+    provideStore({
+      auth: authReducer,
+      products: productsReducer,
+      cart: cartReducer,
+      wishlist: wishlistReducer,
+    }),
     provideEffects([AuthEffects, ProductsEffects, CartEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: environment.production }),
   ],

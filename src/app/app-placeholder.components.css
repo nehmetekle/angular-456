@@ -108,6 +108,48 @@ nav a.active {
   text-align: center;
 }
 
+/* Wishlist link and badge styling (matches provided mock) */
+.wish-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.25rem 0.6rem;
+}
+.wish-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  color: #e91e63;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+.wish-label { font-weight: 700; color: #242424 }
+.wish-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #d32f2f;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: 6px;
+  text-align: center;
+}
+
+/* make cart badge slightly larger on high-DPI and align spacing */
+@media (min-width: 480px) {
+  .cart-badge { min-width: 22px; height: 22px; line-height:22px; font-size:0.78rem }
+}
+
 /* Hero */
 .hero {
   background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);

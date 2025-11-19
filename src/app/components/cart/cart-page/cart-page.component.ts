@@ -32,6 +32,39 @@ export class CartPageComponent {
   discount$: Observable<number> = this.store.select(selectCartDiscount);
   total$: Observable<number> = this.store.select(selectCartTotal);
   coupon$ = this.store.select(selectCartCoupon);
+  // animation tracking
+  animatingIds = new Set<number>();
+
+  constructor() {
+    // subscribe to items changes to detect added/removed items and trigger CSS animations
+    let prev: any[] = [];
+    this.items$.subscribe((next) => {
+      const prevIds = new Set(prev.map((i) => i.product?.id));
+      const nextIds = new Set((next || []).map((i) => i.product?.id));
+
+      // additions
+      (next || [])
+        .filter((i) => !prevIds.has(i.product?.id))
+        .forEach((i) => {
+          const id = i.product?.id;
+          if (!id) return;
+          this.animatingIds.add(id);
+          setTimeout(() => this.animatingIds.delete(id), 400);
+        });
+
+      // removals - trigger a quick leave animation by marking id, it will be removed from DOM soon
+      prev
+        .filter((i) => !nextIds.has(i.product?.id))
+        .forEach((i) => {
+          const id = i.product?.id;
+          if (!id) return;
+          this.animatingIds.add(id);
+          setTimeout(() => this.animatingIds.delete(id), 400);
+        });
+
+      prev = (next || []).slice();
+    });
+  }
 
   remove(productId: number) {
     // find item quantity, restore stock, then remove

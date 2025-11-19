@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { WishlistButtonComponent } from '../../wishlist/wishlist-button/wishlist-button.component';
 import { RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -20,7 +21,7 @@ import {
 @Component({
   standalone: true,
   selector: 'app-products-page',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, WishlistButtonComponent],
   templateUrl: './products-page.component.html',
   styleUrls: ['./products-page.component.css'],
 })

@@ -43,6 +43,14 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
+        path: 'shop/wishlist',
+        loadComponent: () =>
+          import('./components/wishlist/wishlist-page/wishlist-page.component').then(
+            (m) => m.WishlistPageComponent,
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
         path: 'shop/checkout',
         loadComponent: () =>
           import('./components/checkout/checkout-shell/checkout-shell.component').then(

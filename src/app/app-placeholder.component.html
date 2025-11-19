@@ -16,6 +16,11 @@
       </ng-template>
       <a routerLink="/app/shop/products" mat-button>Products</a>
       <a routerLink="/app/shop/rating" mat-button>Rating</a>
+      <a routerLink="/app/shop/wishlist" mat-button class="wish-link" aria-label="Wishlist">
+        <span class="wish-icon" aria-hidden>❤</span>
+        <span class="wish-label">Wishlist</span>
+        <span class="wish-badge" *ngIf="wishlistCount$ | async as wc">{{ wc }}</span>
+      </a>
       <a routerLink="/app/shop/cart" mat-button class="cart-link">
         Cart
         <span class="cart-badge" *ngIf="cartCount$ | async as c">{{ c }}</span>
