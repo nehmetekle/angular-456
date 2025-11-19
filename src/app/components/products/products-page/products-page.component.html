@@ -15,21 +15,33 @@
 
   <ul class="products-list">
     <li *ngFor="let p of products$ | async" class="product-item">
-      <div class="product-card">
+      <div class="product-card" [class.animate]="recentlyAddedId === p.id">
         <div class="product-image">
-          <a [routerLink]="['/app/shop/products', p.id]"><img [src]="p.image || '/assets/avif-test-image.avif'" alt="{{ p.name }}" /></a>
+          <a [routerLink]="['/app/shop/products', p.id]"
+            ><img [src]="p.image || '/assets/avif-test-image.avif'" alt="{{ p.name }}"
+          /></a>
         </div>
         <div class="product-body">
-          <div class="product-name"><a [routerLink]="['/app/shop/products', p.id]">{{ p.name }}</a></div>
-          <div class="product-desc">{{ p.description || 'High-quality item — ideal for everyday use.' }}</div>
+          <div class="product-name">
+            <a [routerLink]="['/app/shop/products', p.id]">{{ p.name }}</a>
+          </div>
+          <div class="product-desc">
+            {{ p.description || 'High-quality item — ideal for everyday use.' }}
+          </div>
         </div>
         <div class="product-side">
           <div class="product-price">{{ p.price | currency }}</div>
-          <div class="product-actions">
-            <button class="ghost" (click)="showRating(p.id)">Show rating</button>
-            <button class="add-to-cart" (click)="addToCartWithFeedback(p)">Add to cart</button>
+          <div class="stock" *ngIf="p.stock as s">
+            <small *ngIf="s > 0" class="in">In stock</small>
+            <small *ngIf="s <= 0" class="out">Out of stock</small>
           </div>
-          <div *ngIf="(selectedId$ | async) === p.id" class="rating">Rating: {{ selectedRating$ | async }}</div>
+            <div class="product-actions">
+            <button class="ghost" (click)="showRating(p.id)">Show rating</button>
+            <button class="add-to-cart" (click)="addToCartWithFeedback(p)" [disabled]="(p.stock ?? 0) <= 0" [class.animate]="recentlyAddedId === p.id">Add to cart</button>
+          </div>
+          <div *ngIf="(selectedId$ | async) === p.id" class="rating">
+            Rating: {{ selectedRating$ | async }}
+          </div>
         </div>
       </div>
     </li>

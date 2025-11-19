@@ -1,0 +1,73 @@
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.cart-table th,
+.cart-table td {
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+  text-align: left;
+}
+.subtotal {
+  margin-top: 12px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.subtotal .discount {
+  color: #d32f2f;
+  font-weight: 600;
+}
+.subtotal .total {
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+.coupon small {
+  color: #1976d2;
+}
+.cart-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+.cart-actions .primary {
+  background: #1976d2;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+}
+
+/* animate table rows */
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.cart-table tbody tr {
+  animation: rowIn 240ms ease both;
+}
+
+/* small button utilities */
+.btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-primary {
+  background: linear-gradient(180deg, #1976d2, #115293);
+  color: #fff;
+  border: none;
+}
+.btn-ghost {
+  background: transparent;
+  color: #1976d2;
+  border: 1px solid rgba(25, 118, 210, 0.12);
+}

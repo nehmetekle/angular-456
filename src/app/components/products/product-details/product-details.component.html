@@ -3,13 +3,19 @@
   <div *ngIf="error">Error loading product.</div>
   <div *ngIf="product">
     <div class="top">
-      <div class="image"><img [src]="product.image || '/assets/avif-test-image.avif'" alt="{{ product.name }}" /></div>
+      <div class="image">
+        <img [src]="product.image || '/assets/avif-test-image.avif'" alt="{{ product.name }}" />
+      </div>
       <div class="info">
         <h2>{{ product.name }}</h2>
         <p class="desc">{{ product.description }}</p>
-        <div class="price">{{ product.price | number:'1.2-2' }} €</div>
+        <div class="price">{{ product.price | number: '1.2-2' }} €</div>
         <div class="actions">
-          <button class="add" (click)="addToCart()">Add to cart</button>
+          <div class="stock" *ngIf="product?.stock as s">
+            <small *ngIf="s > 0" class="in">In stock: {{ s }}</small>
+            <small *ngIf="s <= 0" class="out">Out of stock</small>
+          </div>
+          <button class="add" (click)="addToCart()" [disabled]="(product?.stock ?? 0) <= 0">Add to cart</button>
         </div>
       </div>
     </div>

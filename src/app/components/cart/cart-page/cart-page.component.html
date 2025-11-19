@@ -1,0 +1,63 @@
+<h2>Your Cart</h2>
+<div *ngIf="items$ | async as items">
+  <div *ngIf="items.length; else empty">
+    <table class="cart-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Unit</th>
+          <th>Quantity</th>
+          <th>Line</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let it of items">
+          <td>
+            {{ it.product.name }}
+            <div class="mini-stock" *ngIf="it.product?.stock as s">
+              <small *ngIf="s > 0" class="in">In stock: {{ s }}</small>
+              <small *ngIf="s <= 0" class="out">Out of stock</small>
+            </div>
+          </td>
+          <td>{{ it.product.price | number: '1.2-2' }} €</td>
+          <td>
+            <input
+              type="number"
+              min="1"
+              [attr.max]="it.product?.stock || null"
+              [ngModel]="it.quantity"
+              (ngModelChange)="updateQuantity(it.product.id, $event)"
+            />
+          </td>
+          <td>{{ it.product.price * it.quantity | number: '1.2-2' }} €</td>
+          <td><button (click)="remove(it.product.id)">Remove</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="subtotal">
+      <div>Subtotal: {{ subtotal$ | async | number: '1.2-2' }} €</div>
+      <ng-container *ngIf="discount$ | async as d">
+        <div *ngIf="d > 0" class="discount">Discount: -{{ d | number: '1.2-2' }} €</div>
+      </ng-container>
+      <div class="total">Total: {{ total$ | async | number: '1.2-2' }} €</div>
+      <div class="coupon" *ngIf="coupon$ | async as c">
+        <small *ngIf="c?.code"
+          >Coupon: {{ c.code }} {{ c?.percent ? '(' + c.percent + '%)' : '' }}</small
+        >
+      </div>
+    </div>
+    <div class="cart-actions">
+      <button
+        class="primary"
+        (click)="proceedToCheckout()"
+        [disabled]="(items$ | async)?.length === 0"
+      >
+        Proceed to checkout
+      </button>
+    </div>
+  </div>
+  <ng-template #empty>
+    <p>Your cart is empty.</p>
+  </ng-template>
+</div>

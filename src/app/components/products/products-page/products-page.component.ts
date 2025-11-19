@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { Product } from '../../../state/products/models/product.model';
 import { ProductsAction } from '../../../state/products/store/products.actions';
 import { CartAction } from '../../../state/cart/store/cart.actions';
+import { ToastService } from '../../../services/toast.service';
 import {
   selectProductsData,
   selectProductsError,
@@ -25,6 +26,7 @@ import {
 })
 export class ProductsPageComponent implements OnInit {
   private store = inject(Store);
+  private toast = inject(ToastService);
 
   products$: Observable<Product[]> = this.store.select(selectProductsData);
   loading$: Observable<boolean> = this.store.select(selectProductsLoading);
@@ -50,14 +52,21 @@ export class ProductsPageComponent implements OnInit {
 
   addToCart(product: Product) {
     this.store.dispatch(CartAction.addItem({ product, quantity: 1 }));
+    this.store.dispatch(ProductsAction.adjustStock({ productId: product.id, delta: -1 }));
+    try { this.toast.show(`${product.name} added to cart`); } catch { }
   }
 
   // transient UI feedback when item added
   addedMessage = '';
+  recentlyAddedId: number | null = null;
   addToCartWithFeedback(product: Product) {
     this.store.dispatch(CartAction.addItem({ product, quantity: 1 }));
+    this.store.dispatch(ProductsAction.adjustStock({ productId: product.id, delta: -1 }));
+    try { this.toast.show(`${product.name} added to cart`); } catch { }
     this.addedMessage = `${product.name} added to cart`;
     setTimeout(() => (this.addedMessage = ''), 1800);
+    this.recentlyAddedId = product.id;
+    setTimeout(() => (this.recentlyAddedId = null), 360);
   }
 
   loadPage(page: number) {
