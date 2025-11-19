@@ -41,5 +41,8 @@ export abstract class CartAction {
   static removeCoupon = createAction('[Cart] Remove Coupon');
 
   // Shipping / delivery options
-  static setShippingMethod = createAction('[Cart] Set Shipping Method', props<{ method: string }>());
+  static setShippingMethod = createAction(
+    '[Cart] Set Shipping Method',
+    props<{ method: string }>(),
+  );
 }

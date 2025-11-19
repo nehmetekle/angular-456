@@ -28,4 +28,10 @@ export abstract class ProductsAction {
     '[Products] Load Rating Failure',
     props<{ error: any }>(),
   );
+
+  // Adjust product stock (delta may be negative to reserve stock, positive to restore)
+  static adjustStock = createAction(
+    '[Products] Adjust Stock',
+    props<{ productId: number; delta: number }>(),
+  );
 }

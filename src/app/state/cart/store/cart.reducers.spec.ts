@@ -11,8 +11,18 @@ describe('cartReducer basic', () => {
   });
 
   it('applies coupon and validate success updates totals', () => {
-    const initial: any = { items: [{ product: { id: 1, price: 5 }, quantity: 1 }], subtotal: 5, discount: 0, totalPrice: 5 };
-    const summary = { subtotal: 5, discounts: 1, total: 4, coupon: { code: 'SAVE20', percent: 20 } };
+    const initial: any = {
+      items: [{ product: { id: 1, price: 5 }, quantity: 1 }],
+      subtotal: 5,
+      discount: 0,
+      totalPrice: 5,
+    };
+    const summary = {
+      subtotal: 5,
+      discounts: 1,
+      total: 4,
+      coupon: { code: 'SAVE20', percent: 20 },
+    };
     const state = cartReducer(initial, CartAction.validateCartSuccess({ summary }));
     expect(state.discount).toBe(1);
     expect(state.totalPrice).toBe(4);

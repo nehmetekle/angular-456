@@ -13,6 +13,12 @@ export interface CartState {
   discount?: number;
   // total after discounts + tax + shipping
   totalPrice?: number;
+  // tax amount
+  tax?: number;
+  // shipping cost
+  shipping?: number;
+  // shipping options returned by validator
+  shipping_options?: Array<{ id: string; name: string; price: number }> | null;
   count?: number;
   // coupon applied (if any)
   coupon?: { code?: string; percent?: number } | null;

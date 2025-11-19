@@ -32,7 +32,12 @@ export const handlers = [
     const ordering = url.searchParams.get('ordering') || '-created_at';
 
     const rows = products
-      .map((p) => ({ ...p, _avg: avgRating(p.ratings) }))
+      .map((p) => ({
+        ...p,
+        _avg: avgRating(p.ratings),
+        // simple deterministic stock for mocks
+        stock: (p.id % 7) + 1,
+      }))
       .filter((p) => p._avg >= min_rating);
 
     const sign = ordering.startsWith('-') ? -1 : 1;
@@ -66,7 +71,9 @@ export const handlers = [
       rating_count: p.ratings.length,
       description: `Description for ${p.name}`,
       images: [`/assets/${p.id}.jpg`],
-      available: true,
+      // mock stock value
+      stock: (p.id % 7) + 1,
+      available: (p.id % 7) + 1 > 0,
     };
 
     return HttpResponse.json(detail, { status: 200 });
@@ -76,6 +83,7 @@ export const handlers = [
   http.post(`${API}/cart/validate/`, async ({ request }) => {
     const body = (await request.json().catch(() => ({}))) as any;
     const items: Array<{ product_id: number; quantity: number }> = body?.items || [];
+    const couponCode: string | undefined = body?.coupon;
 
     const taxRate = 0.2; // 20% VAT
     const shippingThreshold = 50; // free shipping over 50
@@ -85,21 +93,49 @@ export const handlers = [
       const p = products.find((x) => x.id === Number(it.product_id));
       const unit_price = p ? p.price : 0;
       const quantity = Number(it.quantity) || 0;
-      const line_total = +(unit_price * quantity).toFixed(2);
+      const stock = p ? (p.id % 7) + 1 : 0;
+      const available = Boolean(p) && quantity <= stock && stock > 0;
+      const line_total = available ? +(unit_price * quantity).toFixed(2) : 0;
       return {
         product_id: Number(it.product_id),
         name: p ? p.name : 'Unknown product',
         unit_price,
         quantity,
         line_total,
-        available: Boolean(p),
+        available,
+        stock,
       };
     });
 
     const subtotal = +validatedItems.reduce((s, i) => s + i.line_total, 0).toFixed(2);
-    const shipping = subtotal >= shippingThreshold || subtotal === 0 ? 0 : flatShipping;
+    // respect shipping method requested by client (standard/express/priority)
+    const method = body?.shippingMethod;
+    let shipping = subtotal >= shippingThreshold || subtotal === 0 ? 0 : flatShipping;
+    if (method === 'express') shipping = 8.9;
+    if (method === 'priority') shipping = 12.9;
     const tax = +(+subtotal * taxRate).toFixed(2);
-    const discounts = 0;
+    let discounts = 0;
+    let appliedCoupon: any = null;
+
+    // simple coupon rules
+    if (couponCode) {
+      const code = String(couponCode).trim().toUpperCase();
+      if (code === 'SAVE10') {
+        discounts = +(subtotal * 0.1).toFixed(2);
+        appliedCoupon = { code, percent: 10 };
+      } else if (code === 'HALF') {
+        discounts = +(subtotal * 0.5).toFixed(2);
+        appliedCoupon = { code, percent: 50 };
+      } else if (code === 'FREESHIP') {
+        discounts = 0;
+        shipping = 0;
+        appliedCoupon = { code, percent: 0 };
+      } else {
+        // unknown coupon -> no discount (could mark invalid)
+        appliedCoupon = { code, percent: 0 };
+      }
+    }
+
     const total = +(+subtotal + +tax + +shipping - +discounts).toFixed(2);
 
     return HttpResponse.json(
@@ -110,6 +146,17 @@ export const handlers = [
         shipping,
         tax,
         total,
+        coupon: appliedCoupon,
+        // available shipping options (informational)
+        shipping_options: [
+          {
+            id: 'standard',
+            name: 'Standard',
+            price: subtotal >= shippingThreshold || subtotal === 0 ? 0 : flatShipping,
+          },
+          { id: 'express', name: 'Express (2-3 days)', price: 8.9 },
+          { id: 'priority', name: 'Priority (next day)', price: 12.9 },
+        ],
       },
       { status: 200 },
     );
@@ -119,19 +166,51 @@ export const handlers = [
   http.post(`${API}/order/`, async ({ request }) => {
     const body = (await request.json().catch(() => ({}))) as any;
     const items: Array<{ product_id: number; quantity: number }> = body?.items || [];
+    const couponCode: string | undefined = body?.coupon;
 
     // Reuse validation logic (lightweight)
     const validated = items.map((it) => {
       const p = products.find((x) => x.id === Number(it.product_id));
       const unit_price = p ? p.price : 0;
       const quantity = Number(it.quantity) || 0;
-      return { unit_price, quantity, line_total: +(unit_price * quantity).toFixed(2) };
+      const stock = p ? (p.id % 7) + 1 : 0;
+      const available = Boolean(p) && quantity <= stock && stock > 0;
+      return {
+        unit_price,
+        quantity,
+        line_total: available ? +(unit_price * quantity).toFixed(2) : 0,
+        available,
+        stock,
+      };
     });
 
     const subtotal = +validated.reduce((s, i) => s + i.line_total, 0).toFixed(2);
+    let shipping = subtotal >= 50 || subtotal === 0 ? 0 : 4.9;
     const tax = +(+subtotal * 0.2).toFixed(2);
-    const shipping = subtotal >= 50 || subtotal === 0 ? 0 : 4.9;
-    const total = +(+subtotal + +tax + +shipping).toFixed(2);
+    let discounts = 0;
+    let appliedCoupon: any = null;
+    // shipping method override from client
+    const method = body?.shippingMethod;
+    if (method === 'express') shipping = 8.9;
+    if (method === 'priority') shipping = 12.9;
+    if (couponCode) {
+      const code = String(couponCode).trim().toUpperCase();
+      if (code === 'SAVE10') {
+        discounts = +(subtotal * 0.1).toFixed(2);
+        appliedCoupon = { code, percent: 10 };
+      } else if (code === 'HALF') {
+        discounts = +(subtotal * 0.5).toFixed(2);
+        appliedCoupon = { code, percent: 50 };
+      } else if (code === 'FREESHIP') {
+        discounts = 0;
+        shipping = 0;
+        appliedCoupon = { code, percent: 0 };
+      } else {
+        appliedCoupon = { code, percent: 0 };
+      }
+    }
+
+    const total = +(+subtotal + +tax + +shipping - +discounts).toFixed(2);
 
     const order = {
       id: `ORD-${Date.now()}`,
@@ -139,7 +218,9 @@ export const handlers = [
       subtotal,
       tax,
       shipping,
+      discounts,
       total,
+      coupon: appliedCoupon,
       created_at: new Date().toISOString(),
       estimated_delivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     };

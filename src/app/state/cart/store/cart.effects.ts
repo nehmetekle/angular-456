@@ -15,24 +15,35 @@ export class CartEffects {
   validateCart$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CartAction.validateCart),
-      mergeMap(({ items, coupon, shippingMethod }: any) =>
-        this.cartService.validateCart({ items, coupon, shippingMethod }).pipe(
+      mergeMap(({ items, coupon, shippingMethod }: any) => {
+        // normalize items to API shape: { product_id, quantity }
+        const apiItems = (items || []).map((it: any) => ({
+          product_id: it?.product?.id ?? it?.product_id ?? it?.id,
+          quantity: it?.quantity ?? it?.qty ?? 0,
+        }));
+        return this.cartService.validateCart({ items: apiItems, coupon, shippingMethod }).pipe(
           map((res: any) => CartAction.validateCartSuccess({ summary: res })),
           catchError((error) => of(CartAction.validateCartFailure({ error }))),
-        ),
-      ),
+        );
+      }),
     ),
   );
 
   createOrder$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CartAction.createOrder),
-      mergeMap(({ payload }) =>
-        this.cartService.createOrder(payload).pipe(
+      mergeMap(({ payload }: any) => {
+        // normalize order items to API shape if necessary
+        const items = (payload?.items || []).map((it: any) => ({
+          product_id: it?.product?.id ?? it?.product_id ?? it?.id,
+          quantity: it?.quantity ?? it?.qty ?? 0,
+        }));
+        const apiPayload = { ...payload, items };
+        return this.cartService.createOrder(apiPayload).pipe(
           map((res: any) => CartAction.createOrderSuccess({ order: res })),
           catchError((error) => of(CartAction.createOrderFailure({ error }))),
-        ),
-      ),
+        );
+      }),
     ),
   );
 

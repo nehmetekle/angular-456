@@ -84,7 +84,14 @@ export const cartReducer = createReducer(
       totalPrice: totals.totalPrice,
     };
   }),
-  on(CartAction.clearCart, () => ({ items: [], subtotal: 0, discount: 0, totalPrice: 0, count: 0, coupon: null })),
+  on(CartAction.clearCart, () => ({
+    items: [],
+    subtotal: 0,
+    discount: 0,
+    totalPrice: 0,
+    count: 0,
+    coupon: null,
+  })),
 
   // Replace entire cart state (used for hydration across tabs / restore)
   on(CartAction.hydrateCart, (_state, { cartState }) => {
@@ -97,7 +104,15 @@ export const cartReducer = createReducer(
       const totalPrice = Number(cartState.totalPrice) || 0;
       const count = Number(cartState.count) || 0;
       const coupon = cartState.coupon || null;
-      return { items, subtotal, discount, totalPrice, count, coupon, shippingMethod: cartState.shippingMethod || null };
+      return {
+        items,
+        subtotal,
+        discount,
+        totalPrice,
+        count,
+        coupon,
+        shippingMethod: cartState.shippingMethod || null,
+      };
     } catch (e) {
       return initialState;
     }
@@ -109,7 +124,9 @@ export const cartReducer = createReducer(
       const items = state.items ?? [];
       const totals = computeTotals(items);
       // simple client-side coupon rules (mirror server mocks)
-      const key = String(code || '').trim().toUpperCase();
+      const key = String(code || '')
+        .trim()
+        .toUpperCase();
       let percent = 0;
       if (key === 'SAVE10') percent = 0.1;
       else if (key === 'HALF') percent = 0.5;
@@ -125,13 +142,19 @@ export const cartReducer = createReducer(
         totalPrice,
       } as CartState;
     } catch (e) {
-      return { ...state, coupon: { code }, } as CartState;
+      return { ...state, coupon: { code } } as CartState;
     }
   }),
   on(CartAction.removeCoupon, (state) => {
     const items = state.items ?? [];
     const totals = computeTotals(items);
-    return { ...state, coupon: null, discount: 0, subtotal: totals.subtotal, totalPrice: totals.totalPrice } as CartState;
+    return {
+      ...state,
+      coupon: null,
+      discount: 0,
+      subtotal: totals.subtotal,
+      totalPrice: totals.totalPrice,
+    } as CartState;
   }),
 
   on(CartAction.setShippingMethod, (state, { method }) => ({ ...state, shippingMethod: method })),
@@ -144,9 +167,16 @@ export const cartReducer = createReducer(
         // keep items as-is; assume summary corresponds
         subtotal: Number(summary.subtotal) || 0,
         discount: Number(summary.discounts) || 0,
+        tax: Number(summary.tax) || 0,
+        shipping: Number(summary.shipping) || 0,
+        shipping_options: Array.isArray(summary.shipping_options)
+          ? summary.shipping_options
+          : state.shipping_options || null,
         totalPrice: Number(summary.total) || 0,
         // if backend reports applied coupon, persist it
-        coupon: summary.coupon ? { code: summary.coupon.code, percent: summary.coupon.percent } : state.coupon || null,
+        coupon: summary.coupon
+          ? { code: summary.coupon.code, percent: summary.coupon.percent }
+          : state.coupon || null,
       } as CartState;
     } catch (e) {
       return state;

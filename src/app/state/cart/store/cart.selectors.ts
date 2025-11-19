@@ -20,12 +20,25 @@ export const selectCartSubtotal = createSelector(selectCartState, (s: any) => {
 });
 export const selectCartDiscount = createSelector(selectCartState, (s: any) => s.discount ?? 0);
 export const selectCartTotal = createSelector(selectCartState, (s: any) => {
-  // prefer validated totalPrice when it's a positive number, otherwise compute from items and discount
+  // prefer validated totalPrice when it's a positive number, otherwise compute from items, discount, tax and shipping
   if (typeof s.totalPrice === 'number' && s.totalPrice > 0) return s.totalPrice;
   const subtotal = selectCartSubtotal.projector(s);
   const discount = Number(s.discount || 0);
-  return +(subtotal - discount).toFixed(2);
+  const tax = Number(s.tax || 0);
+  const shipping = Number(s.shipping || 0);
+  return +(subtotal - discount + tax + shipping || 0).toFixed(2);
 });
+// Total excluding shipping (used in Cart Summary step before shipping is selected/applied)
+export const selectCartTotalExcludingShipping = createSelector(selectCartState, (s: any) => {
+  // prefer validated totalPrice minus shipping when possible
+  const subtotal = selectCartSubtotal.projector(s);
+  const discount = Number(s.discount || 0);
+  const tax = Number(s.tax || 0);
+  return +(subtotal - discount + tax || 0).toFixed(2);
+});
+export const selectCartShipping = createSelector(selectCartState, (s: any) =>
+  Number(s.shipping || 0),
+);
 export const selectCartCount = createSelector(selectCartState, (s: any) => s.count ?? 0);
 export const selectCartCoupon = createSelector(selectCartState, (s: any) => s.coupon ?? null);
 export const selectShippingMethod = createSelector(
