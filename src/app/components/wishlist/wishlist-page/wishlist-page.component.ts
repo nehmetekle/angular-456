@@ -14,7 +14,7 @@ import { ToastService } from '../../../services/toast.service';
     <div class="wishlist-page">
       <div class="page-header">
         <h2>Your Favorites</h2>
-        <div class="meta" *ngIf="items$ | async as items">{{ (items?.length || 0) }} items</div>
+        <div class="meta" *ngIf="items$ | async as items">{{ items?.length || 0 }} items</div>
       </div>
 
       <div *ngIf="items$ | async as items">
@@ -46,21 +46,81 @@ import { ToastService } from '../../../services/toast.service';
   `,
   styles: [
     `
-    .wishlist-page { padding: 8px 4px }
-    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px }
-    .meta { color:#64748b }
-    .cards { display:grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap:12px }
-    .card { display:flex; gap:12px; align-items:center; padding:12px; border-radius:8px; background:#fff; border:1px solid rgba(10,10,10,0.04) }
-    .thumb img { width:84px; height:84px; object-fit:cover; border-radius:6px }
-    .info { display:flex; flex-direction:column; gap:6px }
-    .name { font-weight:700 }
-    .price { color:#1976d2 }
-    .actions { margin-top:6px; display:flex; gap:8px }
-    .btn { padding:8px 10px; border-radius:8px; border:none; cursor:pointer }
-    .btn.primary { background:#1976d2; color:#fff }
-    .btn.ghost { background:transparent; color:#1976d2; border:1px solid rgba(25,118,210,0.12) }
-    .empty { text-align:center; padding:36px; border-radius:10px; border:1px dashed rgba(0,0,0,0.06); background:#fbfbfd }
-    .empty .emoji { font-size:40px; color:#e91e63; margin-bottom:12px }
+      .wishlist-page {
+        padding: 8px 4px;
+      }
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+      .meta {
+        color: #64748b;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+      }
+      .card {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 12px;
+        border-radius: 8px;
+        background: #fff;
+        border: 1px solid rgba(10, 10, 10, 0.04);
+      }
+      .thumb img {
+        width: 84px;
+        height: 84px;
+        object-fit: cover;
+        border-radius: 6px;
+      }
+      .info {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .name {
+        font-weight: 700;
+      }
+      .price {
+        color: #1976d2;
+      }
+      .actions {
+        margin-top: 6px;
+        display: flex;
+        gap: 8px;
+      }
+      .btn {
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+      }
+      .btn.primary {
+        background: #1976d2;
+        color: #fff;
+      }
+      .btn.ghost {
+        background: transparent;
+        color: #1976d2;
+        border: 1px solid rgba(25, 118, 210, 0.12);
+      }
+      .empty {
+        text-align: center;
+        padding: 36px;
+        border-radius: 10px;
+        border: 1px dashed rgba(0, 0, 0, 0.06);
+        background: #fbfbfd;
+      }
+      .empty .emoji {
+        font-size: 40px;
+        color: #e91e63;
+        margin-bottom: 12px;
+      }
     `,
   ],
 })

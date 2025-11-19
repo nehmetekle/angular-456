@@ -127,7 +127,10 @@ nav a.active {
   font-size: 0.95rem;
   line-height: 1;
 }
-.wish-label { font-weight: 700; color: #242424 }
+.wish-label {
+  font-weight: 700;
+  color: #242424;
+}
 .wish-badge {
   display: inline-flex;
   align-items: center;
@@ -147,7 +150,12 @@ nav a.active {
 
 /* make cart badge slightly larger on high-DPI and align spacing */
 @media (min-width: 480px) {
-  .cart-badge { min-width: 22px; height: 22px; line-height:22px; font-size:0.78rem }
+  .cart-badge {
+    min-width: 22px;
+    height: 22px;
+    line-height: 22px;
+    font-size: 0.78rem;
+  }
 }
 
 /* Hero */

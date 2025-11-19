@@ -18,12 +18,15 @@ export class AppLandingComponent {
   private store = inject(Store);
 
   goToShop() {
-    this.store.select(selectIsAuthenticated).pipe(take(1)).subscribe((auth) => {
-      if (auth) {
-        this.router.navigate(['/app/shop/products']);
-      } else {
-        this.router.navigate(['/app/login']);
-      }
-    });
+    this.store
+      .select(selectIsAuthenticated)
+      .pipe(take(1))
+      .subscribe((auth) => {
+        if (auth) {
+          this.router.navigate(['/app/shop/products']);
+        } else {
+          this.router.navigate(['/app/login']);
+        }
+      });
   }
 }
