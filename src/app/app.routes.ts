@@ -26,6 +26,30 @@ export const routes: Routes = [
       { path: '', component: AppLandingComponent },
       { path: 'login', component: LoginPageComponent },
       { path: 'shop/products', component: ProductsPageComponent, canActivate: [AuthGuard] },
+      {
+        path: 'shop/products/:id',
+        loadComponent: () =>
+          import('./components/products/product-details/product-details.component').then(
+            (m) => m.ProductDetailsComponent,
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'shop/cart',
+        loadComponent: () =>
+          import('./components/cart/cart-page/cart-page.component').then(
+            (m) => m.CartPageComponent,
+          ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'shop/checkout',
+        loadComponent: () =>
+          import('./components/checkout/checkout-shell/checkout-shell.component').then(
+            (m) => m.CheckoutShellComponent,
+          ),
+        canActivate: [AuthGuard],
+      },
       { path: 'shop/rating', component: ProductRatingPageComponent, canActivate: [AuthGuard] },
       // { path: '', redirectTo: 'shop/products', pathMatch: 'full' }
     ],

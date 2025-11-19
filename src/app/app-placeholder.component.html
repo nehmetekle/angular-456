@@ -1,6 +1,11 @@
 <header class="site-header">
   <div class="container header-row">
-    <mat-progress-bar *ngIf="isLoading$ | async" mode="indeterminate" color="primary" style="height:3px"></mat-progress-bar>
+    <mat-progress-bar
+      *ngIf="isLoading$ | async"
+      mode="indeterminate"
+      color="primary"
+      style="height: 3px"
+    ></mat-progress-bar>
     <a class="brand" routerLink="/app">Home</a>
     <nav>
       <ng-container *ngIf="isAuthenticated$ | async; else showLogin">
@@ -11,9 +16,16 @@
       </ng-template>
       <a routerLink="/app/shop/products" mat-button>Products</a>
       <a routerLink="/app/shop/rating" mat-button>Rating</a>
+      <a routerLink="/app/shop/cart" mat-button class="cart-link">
+        Cart
+        <span class="cart-badge" *ngIf="cartCount$ | async as c">{{ c }}</span>
+      </a>
     </nav>
   </div>
 </header>
 <main class="container main-content">
   <router-outlet></router-outlet>
 </main>
+
+<!-- toast host -->
+<app-toast-host></app-toast-host>

@@ -7,21 +7,29 @@ import { AuthAction } from './state/auth/store/auth.actions';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { ToastHostComponent } from './components/toast/toast.component';
+import { ToastService } from './services/toast.service';
 import { selectAuthLoading } from './state/auth/store/auth.selectors';
+import { selectCartCount } from './state/cart/store/cart.selectors';
+import { CartSyncService } from './state/cart/service/cart-sync.service';
 
 @Component({
   standalone: true,
   selector: 'app-placeholder',
-  imports: [CommonModule, RouterModule, MatButtonModule, MatProgressBarModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatProgressBarModule, ToastHostComponent],
   templateUrl: './app-placeholder.component.html',
   styleUrls: ['./app-placeholder.components.css'],
 })
 export class AppPlaceholderComponent {
   private store = inject(Store);
   private router = inject(Router);
+  // instantiate CartSyncService to enable cross-tab hydration listener
+  private cartSync = inject(CartSyncService);
+  // provide toast service to children via DI
 
   isAuthenticated$: Observable<boolean> = this.store.select(selectIsAuthenticated);
   isLoading$: Observable<boolean> = this.store.select(selectAuthLoading);
+  cartCount$: Observable<number> = this.store.select(selectCartCount);
 
   logout() {
     this.store.dispatch(AuthAction.logout());
