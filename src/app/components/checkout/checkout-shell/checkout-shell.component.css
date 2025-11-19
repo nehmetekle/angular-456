@@ -116,7 +116,7 @@
 .btn-primary {
   background: linear-gradient(180deg, #1976d2, #115293);
   color: #fff;
-  box-shadow: 0 8px 20px rgba(17,82,147,0.12);
+  box-shadow: 0 8px 20px rgba(17, 82, 147, 0.12);
 }
 .btn-secondary {
   background: #f3f6fb;
@@ -125,13 +125,19 @@
 .btn-ghost {
   background: transparent;
   color: #1976d2;
-  border: 1px solid rgba(25,118,210,0.12);
+  border: 1px solid rgba(25, 118, 210, 0.12);
 }
 
 /* small animation for cart/summary items */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .summary-list li {
   animation: fadeInUp 220ms ease both;
@@ -156,8 +162,15 @@ input {
   gap: 12px;
   align-items: baseline;
 }
-.panel-total .total-label { color: #556; font-weight: 700; margin-right: 8px; }
-.panel-total .total-value { font-weight: 900; font-size: 1.25rem; }
+.panel-total .total-label {
+  color: #556;
+  font-weight: 700;
+  margin-right: 8px;
+}
+.panel-total .total-value {
+  font-weight: 900;
+  font-size: 1.25rem;
+}
 
 /* Confirmation card styling */
 .confirmation-card {
@@ -169,10 +182,28 @@ input {
   background: #fff;
   border: 1px solid #e8eef8;
 }
-.confirmation-card .conf-section { padding: 8px; border-radius: 6px; background: #fbfdff; border: 1px solid #eef6ff; }
-.conf-total { display:flex; flex-direction:column; justify-content:center; align-items:flex-end; padding: 8px; }
-.conf-total .total-label { color:#666; font-weight:700; }
-.conf-total .total-value { font-size:1.6rem; font-weight:900; color:#0b6bb3; }
+.confirmation-card .conf-section {
+  padding: 8px;
+  border-radius: 6px;
+  background: #fbfdff;
+  border: 1px solid #eef6ff;
+}
+.conf-total {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 8px;
+}
+.conf-total .total-label {
+  color: #666;
+  font-weight: 700;
+}
+.conf-total .total-value {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #0b6bb3;
+}
 
 /* spinner / updating indicator */
 .spinner {
@@ -182,6 +213,13 @@ input {
   color: #1976d2;
 }
 
-.unavailable-note { margin-top: 6px; }
-.coupon-invalid { margin-top: 8px; }
-.unavailable-warning { margin-left: 12px; align-self: center; }
+.unavailable-note {
+  margin-top: 6px;
+}
+.coupon-invalid {
+  margin-top: 8px;
+}
+.unavailable-warning {
+  margin-left: 12px;
+  align-self: center;
+}

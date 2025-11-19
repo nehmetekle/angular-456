@@ -45,6 +45,8 @@ export class ProductDetailsComponent implements OnInit {
     if (!this.product) return;
     this.store.dispatch(CartAction.addItem({ product: this.product, quantity: 1 }));
     this.store.dispatch(ProductsAction.adjustStock({ productId: this.product.id, delta: -1 }));
-    try { this.toast.show(`${this.product.name} added to cart`); } catch { }
+    try {
+      this.toast.show(`${this.product.name} added to cart`);
+    } catch {}
   }
 }

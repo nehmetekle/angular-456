@@ -10,7 +10,10 @@ import {
   selectCartDiscount,
   selectCartCoupon,
 } from '../../../state/cart/store/cart.selectors';
-import { selectCartTotalExcludingShipping, selectCartShipping } from '../../../state/cart/store/cart.selectors';
+import {
+  selectCartTotalExcludingShipping,
+  selectCartShipping,
+} from '../../../state/cart/store/cart.selectors';
 import { selectShippingMethod } from '../../../state/cart/store/cart.selectors';
 import { CartAction } from '../../../state/cart/store/cart.actions';
 import { ToastService } from '../../../services/toast.service';
@@ -72,9 +75,12 @@ export class CheckoutShellComponent {
     // (validation listeners attached after initial dispatch)
 
     // restore selected shipping method from store if present
-    this.store.select(selectShippingMethod).pipe(take(1)).subscribe((m) => {
-      if (m) this.selectedShipping = m;
-    });
+    this.store
+      .select(selectShippingMethod)
+      .pipe(take(1))
+      .subscribe((m) => {
+        if (m) this.selectedShipping = m;
+      });
 
     // initial validate to ensure UI reflects server totals
     let currentItems: any[] = [];
@@ -82,7 +88,11 @@ export class CheckoutShellComponent {
     let coupon: any = null;
     this.coupon$.pipe(take(1)).subscribe((c) => (coupon = c));
     this.store.dispatch(
-      CartAction.validateCart({ items: currentItems, coupon: coupon?.code, shippingMethod: this.selectedShipping }),
+      CartAction.validateCart({
+        items: currentItems,
+        coupon: coupon?.code,
+        shippingMethod: this.selectedShipping,
+      }),
     );
 
     // track validation lifecycle and results to update UI immediately
@@ -93,7 +103,8 @@ export class CheckoutShellComponent {
     this.actions$.pipe(ofType(CActions.validateCartSuccess)).subscribe(({ summary }: any) => {
       this.isValidating = false;
       this.lastSummary = summary;
-      this.hasUnavailable = Array.isArray(summary?.items) && summary.items.some((i: any) => !i.available);
+      this.hasUnavailable =
+        Array.isArray(summary?.items) && summary.items.some((i: any) => !i.available);
       if (summary?.shipping_options) this.shippingOptions = summary.shipping_options;
       if (summary?.coupon?.code) this.couponCode = summary.coupon.code;
     });
@@ -147,7 +158,11 @@ export class CheckoutShellComponent {
     let currentItems: any[] = [];
     this.items$.pipe(take(1)).subscribe((it) => (currentItems = it || []));
     this.store.dispatch(
-      CartAction.validateCart({ items: currentItems, coupon: this.couponCode || undefined, shippingMethod: this.selectedShipping }),
+      CartAction.validateCart({
+        items: currentItems,
+        coupon: this.couponCode || undefined,
+        shippingMethod: this.selectedShipping,
+      }),
     );
   }
 
@@ -159,16 +174,24 @@ export class CheckoutShellComponent {
     } catch (e) {}
     let currentItems: any[] = [];
     this.items$.pipe(take(1)).subscribe((it) => (currentItems = it || []));
-    this.store.dispatch(CartAction.validateCart({ items: currentItems, shippingMethod: this.selectedShipping }));
+    this.store.dispatch(
+      CartAction.validateCart({ items: currentItems, shippingMethod: this.selectedShipping }),
+    );
   }
 
   // when user selects shipping option, persist it and re-validate totals
   shippingChanged() {
-    this.store.dispatch(CartAction.setShippingMethod({ method: this.selectedShipping || 'standard' }));
+    this.store.dispatch(
+      CartAction.setShippingMethod({ method: this.selectedShipping || 'standard' }),
+    );
     let currentItems: any[] = [];
     this.items$.pipe(take(1)).subscribe((it) => (currentItems = it || []));
     this.store.dispatch(
-      CartAction.validateCart({ items: currentItems, coupon: this.couponCode || undefined, shippingMethod: this.selectedShipping }),
+      CartAction.validateCart({
+        items: currentItems,
+        coupon: this.couponCode || undefined,
+        shippingMethod: this.selectedShipping,
+      }),
     );
   }
 
@@ -180,56 +203,64 @@ export class CheckoutShellComponent {
 
     // dispatch validation with coupon and shipping method
     this.store.dispatch(
-      CartAction.validateCart({ items: currentItems, coupon: this.couponCode || undefined, shippingMethod: this.selectedShipping }),
+      CartAction.validateCart({
+        items: currentItems,
+        coupon: this.couponCode || undefined,
+        shippingMethod: this.selectedShipping,
+      }),
     );
 
     // wait for validate result, then if all items available create the order
-    this.actions$.pipe(ofType(CActions.validateCartSuccess), take(1)).subscribe(({ summary }: any) => {
-      // check for unavailable items
-      const unavailable = (summary.items || []).some((i: any) => !i.available);
-      if (unavailable) {
-        // show toast + stop
-        try {
-          this.toast.show('Some items are unavailable or exceed stock. Adjust your cart.');
-        } catch (e) {}
-        this.processing = false;
-        return;
-      }
-
-      // build order payload from validated data (prefer server amounts)
-      const payload: any = { items: currentItems, address: this.address };
-      if (summary?.coupon?.code) payload.coupon = summary.coupon.code;
-      else if (this.couponCode) payload.coupon = this.couponCode;
-      if (this.selectedShipping) payload.shippingMethod = this.selectedShipping;
-
-      // dispatch createOrder
-      this.store.dispatch(CartAction.createOrder({ payload }));
-
-      // wait for create result
-      this.actions$.pipe(ofType(CActions.createOrderSuccess), take(1)).subscribe(({ order }) => {
-        this.processing = false;
-        this.orderResult = order;
-        this.step = 3;
-        // clear cart and persist
-        this.store.dispatch(CartAction.clearCart());
-        try {
-          localStorage.setItem('checkout_address', JSON.stringify(this.address));
-        } catch (e) {
-          // ignore
+    this.actions$
+      .pipe(ofType(CActions.validateCartSuccess), take(1))
+      .subscribe(({ summary }: any) => {
+        // check for unavailable items
+        const unavailable = (summary.items || []).some((i: any) => !i.available);
+        if (unavailable) {
+          // show toast + stop
+          try {
+            this.toast.show('Some items are unavailable or exceed stock. Adjust your cart.');
+          } catch (e) {}
+          this.processing = false;
+          return;
         }
-        try {
-          this.toast.show(`Order ${order.id} confirmed`);
-        } catch (e) {}
-      });
 
-      this.actions$.pipe(ofType(CActions.createOrderFailure), take(1)).subscribe(({ error }: any) => {
-        this.processing = false;
-        try {
-          this.toast.show('Failed to place order. Please try again.');
-        } catch (e) {}
-        this.orderResult = null;
+        // build order payload from validated data (prefer server amounts)
+        const payload: any = { items: currentItems, address: this.address };
+        if (summary?.coupon?.code) payload.coupon = summary.coupon.code;
+        else if (this.couponCode) payload.coupon = this.couponCode;
+        if (this.selectedShipping) payload.shippingMethod = this.selectedShipping;
+
+        // dispatch createOrder
+        this.store.dispatch(CartAction.createOrder({ payload }));
+
+        // wait for create result
+        this.actions$.pipe(ofType(CActions.createOrderSuccess), take(1)).subscribe(({ order }) => {
+          this.processing = false;
+          this.orderResult = order;
+          this.step = 3;
+          // clear cart and persist
+          this.store.dispatch(CartAction.clearCart());
+          try {
+            localStorage.setItem('checkout_address', JSON.stringify(this.address));
+          } catch (e) {
+            // ignore
+          }
+          try {
+            this.toast.show(`Order ${order.id} confirmed`);
+          } catch (e) {}
+        });
+
+        this.actions$
+          .pipe(ofType(CActions.createOrderFailure), take(1))
+          .subscribe(({ error }: any) => {
+            this.processing = false;
+            try {
+              this.toast.show('Failed to place order. Please try again.');
+            } catch (e) {}
+            this.orderResult = null;
+          });
       });
-    });
 
     // handle validation failure
     this.actions$.pipe(ofType(CActions.validateCartFailure), take(1)).subscribe(() => {

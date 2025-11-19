@@ -15,7 +15,9 @@
             <small *ngIf="s > 0" class="in">In stock: {{ s }}</small>
             <small *ngIf="s <= 0" class="out">Out of stock</small>
           </div>
-          <button class="add" (click)="addToCart()" [disabled]="(product?.stock ?? 0) <= 0">Add to cart</button>
+          <button class="add" (click)="addToCart()" [disabled]="(product?.stock ?? 0) <= 0">
+            Add to cart
+          </button>
         </div>
       </div>
     </div>

@@ -35,9 +35,16 @@
             <small *ngIf="s > 0" class="in">In stock</small>
             <small *ngIf="s <= 0" class="out">Out of stock</small>
           </div>
-            <div class="product-actions">
+          <div class="product-actions">
             <button class="ghost" (click)="showRating(p.id)">Show rating</button>
-            <button class="add-to-cart" (click)="addToCartWithFeedback(p)" [disabled]="(p.stock ?? 0) <= 0" [class.animate]="recentlyAddedId === p.id">Add to cart</button>
+            <button
+              class="add-to-cart"
+              (click)="addToCartWithFeedback(p)"
+              [disabled]="(p.stock ?? 0) <= 0"
+              [class.animate]="recentlyAddedId === p.id"
+            >
+              Add to cart
+            </button>
           </div>
           <div *ngIf="(selectedId$ | async) === p.id" class="rating">
             Rating: {{ selectedRating$ | async }}

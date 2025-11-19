@@ -53,7 +53,9 @@ export class ProductsPageComponent implements OnInit {
   addToCart(product: Product) {
     this.store.dispatch(CartAction.addItem({ product, quantity: 1 }));
     this.store.dispatch(ProductsAction.adjustStock({ productId: product.id, delta: -1 }));
-    try { this.toast.show(`${product.name} added to cart`); } catch { }
+    try {
+      this.toast.show(`${product.name} added to cart`);
+    } catch {}
   }
 
   // transient UI feedback when item added
@@ -62,7 +64,9 @@ export class ProductsPageComponent implements OnInit {
   addToCartWithFeedback(product: Product) {
     this.store.dispatch(CartAction.addItem({ product, quantity: 1 }));
     this.store.dispatch(ProductsAction.adjustStock({ productId: product.id, delta: -1 }));
-    try { this.toast.show(`${product.name} added to cart`); } catch { }
+    try {
+      this.toast.show(`${product.name} added to cart`);
+    } catch {}
     this.addedMessage = `${product.name} added to cart`;
     setTimeout(() => (this.addedMessage = ''), 1800);
     this.recentlyAddedId = product.id;
