@@ -63,8 +63,25 @@
 .cart-table tbody tr.animating {
   animation: rowIn 320ms cubic-bezier(0.2, 0.9, 0.24, 1) both;
 }
-.cart-table tbody tr.animating.leave {
+.cart-table tbody tr.removing {
   animation: rowOut 260ms ease both;
+  pointer-events: none;
+}
+
+/* small visual pulse for quantity updates or badge changes can be triggered via CSS classes */
+.row-pulse {
+  animation: pulse 360ms ease both;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* small button utilities */

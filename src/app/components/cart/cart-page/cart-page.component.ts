@@ -34,6 +34,7 @@ export class CartPageComponent {
   coupon$ = this.store.select(selectCartCoupon);
   // animation tracking
   animatingIds = new Set<number>();
+  removingIds = new Set<number>();
 
   constructor() {
     // subscribe to items changes to detect added/removed items and trigger CSS animations
@@ -67,16 +68,23 @@ export class CartPageComponent {
   }
 
   remove(productId: number) {
-    // find item quantity, restore stock, then remove
-    let currentItems: any[] = [];
-    this.items$.pipe(take(1)).subscribe((it) => (currentItems = it || []));
-    const it = currentItems.find((x) => x.product?.id === productId);
-    const qty = it ? Number(it.quantity || 0) : 0;
-    if (qty > 0) this.store.dispatch(ProductsAction.adjustStock({ productId, delta: qty }));
-    this.store.dispatch(CartAction.removeItem({ productId }));
-    try {
-      this.toast.show('Removed from cart');
-    } catch {}
+    // play removal animation, then dispatch the remove action
+    if (this.removingIds.has(productId)) return;
+    this.removingIds.add(productId);
+    // allow CSS animation to run before removing from store
+    setTimeout(() => {
+      // find item quantity, restore stock, then remove
+      let currentItems: any[] = [];
+      this.items$.pipe(take(1)).subscribe((it) => (currentItems = it || []));
+      const it = currentItems.find((x) => x.product?.id === productId);
+      const qty = it ? Number(it.quantity || 0) : 0;
+      if (qty > 0) this.store.dispatch(ProductsAction.adjustStock({ productId, delta: qty }));
+      this.store.dispatch(CartAction.removeItem({ productId }));
+      try {
+        this.toast.show('Removed from cart');
+      } catch {}
+      this.removingIds.delete(productId);
+    }, 320);
   }
 
   updateQuantity(productId: number, quantity: any) {

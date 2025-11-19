@@ -24,6 +24,7 @@ import { CartSyncService } from './state/cart/service/cart-sync.service';
 export class AppPlaceholderComponent {
   private store = inject(Store);
   private router = inject(Router);
+  cartPulse = false;
   // instantiate CartSyncService to enable cross-tab hydration listener
   private cartSync = inject(CartSyncService);
   // provide toast service to children via DI
@@ -32,6 +33,18 @@ export class AppPlaceholderComponent {
   isLoading$: Observable<boolean> = this.store.select(selectAuthLoading);
   cartCount$: Observable<number> = this.store.select(selectCartCount);
   wishlistCount$: Observable<number> = this.store.select(selectWishlistCount as any);
+
+  constructor() {
+    // pulse the cart badge when the count changes
+    let prev = -1;
+    this.cartCount$.subscribe((n) => {
+      if (prev !== -1 && n !== prev) {
+        this.cartPulse = true;
+        setTimeout(() => (this.cartPulse = false), 380);
+      }
+      prev = n;
+    });
+  }
 
   logout() {
     this.store.dispatch(AuthAction.logout());
