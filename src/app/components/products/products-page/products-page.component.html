@@ -15,18 +15,27 @@
 
   <ul class="products-list">
     <li *ngFor="let p of products$ | async" class="product-item">
-      <div class="product-main">
-        <div class="product-name">{{ p.name }}</div>
-        <div class="product-price">{{ p.price | currency }}</div>
-      </div>
-      <div class="product-actions">
-        <button (click)="showRating(p.id)">Show rating</button>
-        <span *ngIf="(selectedId$ | async) === p.id" class="rating">
-          Rating: {{ selectedRating$ | async }}
-        </span>
+      <div class="product-card">
+        <div class="product-image">
+          <a [routerLink]="['/app/shop/products', p.id]"><img [src]="p.image || '/assets/avif-test-image.avif'" alt="{{ p.name }}" /></a>
+        </div>
+        <div class="product-body">
+          <div class="product-name"><a [routerLink]="['/app/shop/products', p.id]">{{ p.name }}</a></div>
+          <div class="product-desc">{{ p.description || 'High-quality item — ideal for everyday use.' }}</div>
+        </div>
+        <div class="product-side">
+          <div class="product-price">{{ p.price | currency }}</div>
+          <div class="product-actions">
+            <button class="ghost" (click)="showRating(p.id)">Show rating</button>
+            <button class="add-to-cart" (click)="addToCartWithFeedback(p)">Add to cart</button>
+          </div>
+          <div *ngIf="(selectedId$ | async) === p.id" class="rating">Rating: {{ selectedRating$ | async }}</div>
+        </div>
       </div>
     </li>
   </ul>
+
+  <div *ngIf="addedMessage" class="added-toast">{{ addedMessage }}</div>
 
   <ng-container *ngIf="count$ | async as total">
     <ng-container *ngIf="totalPages$ | async as totalPages">

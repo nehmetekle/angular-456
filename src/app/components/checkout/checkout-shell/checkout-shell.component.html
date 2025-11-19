@@ -1,0 +1,78 @@
+<div class="checkout-shell">
+  <h2>Checkout</h2>
+
+  <div class="steps">
+    <div class="step" [class.active]="step===1">1. Cart Summary</div>
+    <div class="step" [class.active]="step===2">2. Address</div>
+    <div class="step" [class.active]="step===3">3. Confirmation</div>
+  </div>
+
+  <section *ngIf="step===1" class="step-panel">
+    <h3>Cart Summary</h3>
+    <div *ngIf="items$ | async as items">
+      <div *ngIf="items.length; else empty">
+        <ul class="summary-list">
+          <li *ngFor="let it of items">
+            <div class="s-name">{{ it.product.name }}</div>
+            <div class="s-qty">x{{ it.quantity }}</div>
+            <div class="s-line">{{ (it.product.price * it.quantity) | number:'1.2-2' }} €</div>
+          </li>
+        </ul>
+        <div class="summary-total">Subtotal: {{ total$ | async | number:'1.2-2' }} €</div>
+      </div>
+      <ng-template #empty>
+        <p>Your cart is empty.</p>
+      </ng-template>
+    </div>
+    <div class="actions">
+      <button (click)="next()" [disabled]="(items$ | async)?.length === 0">Next: Address</button>
+    </div>
+  </section>
+
+  <section *ngIf="step===2" class="step-panel">
+    <h3>Shipping Address</h3>
+    <form #addr="ngForm">
+      <label>
+        Full name
+        <input name="name" required [(ngModel)]="address.name" />
+      </label>
+      <label>
+        Address line 1
+        <input name="line1" required [(ngModel)]="address.line1" />
+      </label>
+      <label>
+        City
+        <input name="city" required [(ngModel)]="address.city" />
+      </label>
+      <label>
+        Postal code
+        <input name="postal" required [(ngModel)]="address.postal" />
+      </label>
+      <label>
+        Country
+        <input name="country" required [(ngModel)]="address.country" />
+      </label>
+    </form>
+    <div class="actions">
+      <button (click)="back()">Back</button>
+      <button (click)="confirmOrder()" [disabled]="processing || !address.name || !address.line1">Confirm Order</button>
+    </div>
+  </section>
+
+  <section *ngIf="step===3" class="step-panel">
+    <h3>Confirmation</h3>
+    <div *ngIf="orderResult; else processingTpl">
+      <p>Order <strong>{{ orderResult.id }}</strong> confirmed.</p>
+      <p>Status: {{ orderResult.status }}</p>
+      <p>Total: {{ orderResult.total }} €</p>
+      <p>Estimated delivery: {{ orderResult.estimated_delivery | date }}</p>
+    </div>
+    <ng-template #processingTpl>
+      <p *ngIf="processing">Processing order…</p>
+      <p *ngIf="!processing && !orderResult">No order information available.</p>
+    </ng-template>
+    <div class="actions">
+      <button (click)="step=1">Back to shop</button>
+    </div>
+  </section>
+</div>

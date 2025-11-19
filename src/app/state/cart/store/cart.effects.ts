@@ -2,12 +2,15 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { CartAction } from './cart.actions';
 import { CartService } from '../service/cart.service';
-import { mergeMap, map, catchError, of, tap } from 'rxjs';
+import { mergeMap, map, catchError, of, tap, take, debounceTime } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { selectCartState } from './cart.selectors';
 
 @Injectable()
 export class CartEffects {
   private actions$ = inject(Actions);
   private cartService = inject(CartService);
+  private store = inject(Store);
 
   validateCart$ = createEffect(() =>
     this.actions$.pipe(
@@ -33,7 +36,7 @@ export class CartEffects {
     ),
   );
 
-  // Persist cart to localStorage on local modifications
+  // Persist cart to localStorage on local modifications (store full cart state)
   persistCart$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -43,17 +46,19 @@ export class CartEffects {
           CartAction.updateQuantity,
           CartAction.clearCart,
         ),
-        tap((action) => {
-          // read the latest cart from localStorage (or keep minimal representation)
-          // here we just store the action for simplicity; real app should select and store full state
-          try {
-            const existing = JSON.parse(localStorage.getItem('cart') || '[]');
-            // naive append - consumer should replace with actual state write
-            localStorage.setItem('cart_actions', JSON.stringify(existing.concat([action])));
-          } catch (e) {
-            // ignore
-          }
-        }),
+        debounceTime(200),
+        mergeMap(() =>
+          this.store.select(selectCartState).pipe(
+            take(1),
+            tap((state) => {
+              try {
+                localStorage.setItem('cart_state', JSON.stringify(state));
+              } catch (e) {
+                // ignore
+              }
+            }),
+          ),
+        ),
       ),
     { dispatch: false },
   );

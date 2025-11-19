@@ -32,4 +32,9 @@ export class ProductService {
     const url = environment.apiBaseUrl + `products/${id}/rating/`;
     return this.http.get(url);
   }
+
+  getProduct(id: number): Observable<Product | any> {
+    const url = environment.apiBaseUrl + `products/${id}/`;
+    return this.http.get(url);
+  }
 }

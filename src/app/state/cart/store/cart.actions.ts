@@ -29,4 +29,7 @@ export abstract class CartAction {
   static createOrder = createAction('[Cart] Create Order', props<{ payload: any }>());
   static createOrderSuccess = createAction('[Cart] Create Order Success', props<{ order: any }>());
   static createOrderFailure = createAction('[Cart] Create Order Failure', props<{ error: any }>());
+
+  // Hydrate cart from persisted storage (cross-tab or app init)
+  static hydrateCart = createAction('[Cart] Hydrate Cart', props<{ cartState: any }>());
 }

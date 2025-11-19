@@ -2,7 +2,24 @@ import { createReducer, on } from '@ngrx/store';
 import { CartAction } from './cart.actions';
 import { CartState } from './cart.state';
 
-const initialState: CartState = { items: [], totalPrice: 0, count: 0 };
+function loadInitialState(): CartState {
+  try {
+    const raw = localStorage.getItem('cart_state');
+    if (!raw) return { items: [], totalPrice: 0, count: 0 };
+    const parsed = JSON.parse(raw);
+    // basic validation
+    if (!parsed || typeof parsed !== 'object') return { items: [], totalPrice: 0, count: 0 };
+    return {
+      items: Array.isArray(parsed.items) ? parsed.items : [],
+      totalPrice: Number(parsed.totalPrice) || 0,
+      count: Number(parsed.count) || 0,
+    };
+  } catch (e) {
+    return { items: [], totalPrice: 0, count: 0 };
+  }
+}
+
+const initialState: CartState = loadInitialState();
 
 function computeTotals(items: any[]) {
   const count = items.reduce((s, i) => s + (i.quantity || 0), 0);
@@ -40,6 +57,19 @@ export const cartReducer = createReducer(
     const totals = computeTotals(items);
     return { ...state, items, count: totals.count, totalPrice: totals.totalPrice };
   }),
-
   on(CartAction.clearCart, () => initialState),
+
+  // Replace entire cart state (used for hydration across tabs / restore)
+  on(CartAction.hydrateCart, (_state, { cartState }) => {
+    try {
+      if (!cartState) return initialState;
+      // basic shape normalization
+      const items = Array.isArray(cartState.items) ? cartState.items : [];
+      const totalPrice = Number(cartState.totalPrice) || 0;
+      const count = Number(cartState.count) || 0;
+      return { items, totalPrice, count };
+    } catch (e) {
+      return initialState;
+    }
+  }),
 );

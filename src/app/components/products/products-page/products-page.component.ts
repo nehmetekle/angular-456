@@ -1,10 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Product } from '../../../state/products/models/product.model';
 import { ProductsAction } from '../../../state/products/store/products.actions';
+import { CartAction } from '../../../state/cart/store/cart.actions';
 import {
   selectProductsData,
   selectProductsError,
@@ -17,7 +19,7 @@ import {
 @Component({
   standalone: true,
   selector: 'app-products-page',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './products-page.component.html',
   styleUrls: ['./products-page.component.css'],
 })
@@ -44,6 +46,18 @@ export class ProductsPageComponent implements OnInit {
 
   showRating(id: number) {
     this.store.dispatch(ProductsAction.selectProduct({ id }));
+  }
+
+  addToCart(product: Product) {
+    this.store.dispatch(CartAction.addItem({ product, quantity: 1 }));
+  }
+  
+  // transient UI feedback when item added
+  addedMessage = '';
+  addToCartWithFeedback(product: Product) {
+    this.store.dispatch(CartAction.addItem({ product, quantity: 1 }));
+    this.addedMessage = `${product.name} added to cart`;
+    setTimeout(() => (this.addedMessage = ''), 1800);
   }
 
   loadPage(page: number) {
